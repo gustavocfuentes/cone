@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de Imagenes con IA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>🎨 Generador de Imagenes</h1>
+      <p class="subtitle">Escribe un prompt y genera una imagen usando OpenRouter</p>
+    </header>
+
+    <section class="panel">
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" rows="3" placeholder="Ej: un zorro astronauta pintado al oleo, colores vibrantes"></textarea>
+
+      <label for="model">Modelo</label>
+      <select id="model"></select>
+
+      <button id="generateBtn">Generar imagen</button>
+    </section>
+
+    <section class="result" id="result">
+      <div id="status" class="status"></div>
+      <div id="imageWrap" class="image-wrap"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
