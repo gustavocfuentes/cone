@@ -2,17 +2,22 @@ const MODELS = ['google/gemini-2.5-flash-image-preview'];
 
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url);
+    try {
+      const url = new URL(request.url);
 
-    if (url.pathname === '/api/models' && request.method === 'GET') {
-      return handleModels();
+      if (url.pathname === '/api/models' && request.method === 'GET') {
+        return handleModels();
+      }
+
+      if (url.pathname === '/api/generate' && request.method === 'POST') {
+        return await handleGenerate(request, env);
+      }
+
+      return env.ASSETS.fetch(request);
+    } catch (err) {
+      // cualquier error no controlado devuelve JSON en vez de un body vacio
+      return json({ error: `Error interno del Worker: ${err.message || err}` }, 500);
     }
-
-    if (url.pathname === '/api/generate' && request.method === 'POST') {
-      return handleGenerate(request, env);
-    }
-
-    return env.ASSETS.fetch(request);
   },
 };
 

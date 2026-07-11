@@ -43,10 +43,23 @@ async function generate() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt, model: modelEl.value }),
     });
-    const data = await res.json();
+
+    const raw = await res.text();
+    let data = {};
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        throw new Error(`El servidor respondio algo que no es JSON (status ${res.status}): ${raw.slice(0, 200)}`);
+      }
+    }
 
     if (!res.ok) {
-      throw new Error(data.error || 'Error desconocido');
+      throw new Error(data.error || `Error ${res.status} del servidor.`);
+    }
+
+    if (!Array.isArray(data.images) || data.images.length === 0) {
+      throw new Error('El servidor respondio 200 pero sin body/imagenes (respuesta vacia). Revisa las variables de entorno del Worker en Cloudflare.');
     }
 
     imageWrap.innerHTML = '';
