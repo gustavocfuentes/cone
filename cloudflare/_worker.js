@@ -1,8 +1,29 @@
 const MODELS = ['google/gemini-2.5-flash-image-preview'];
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
 
+    if (url.pathname === '/api/models' && request.method === 'GET') {
+      return handleModels();
+    }
+
+    if (url.pathname === '/api/generate' && request.method === 'POST') {
+      return handleGenerate(request, env);
+    }
+
+    return env.ASSETS.fetch(request);
+  },
+};
+
+async function handleModels() {
+  const models = [
+    { id: 'google/gemini-2.5-flash-image-preview', label: 'Gemini 2.5 Flash Image (~$0.04/imagen)' },
+  ];
+  return json({ models });
+}
+
+async function handleGenerate(request, env) {
   let body;
   try {
     body = await request.json();
@@ -19,7 +40,7 @@ export async function onRequestPost(context) {
 
   const OPENROUTER_API_KEY = env.OPENROUTER_API_KEY;
   if (!OPENROUTER_API_KEY) {
-    return json({ error: 'Falta configurar la variable de entorno OPENROUTER_API_KEY en Cloudflare Pages.' }, 500);
+    return json({ error: 'Falta configurar la variable de entorno OPENROUTER_API_KEY en el Worker.' }, 500);
   }
 
   const supa = supabaseClient(env);
@@ -65,7 +86,7 @@ export async function onRequestPost(context) {
       headers: {
         Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': request.headers.get('origin') || 'https://pages.dev',
+        'HTTP-Referer': request.headers.get('origin') || 'https://workers.dev',
         'X-Title': 'Cone Image Generator',
       },
       body: JSON.stringify({

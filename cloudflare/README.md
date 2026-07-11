@@ -1,7 +1,15 @@
-# Generador de imagenes — version Cloudflare Pages
+# Generador de imagenes — version Cloudflare Workers (con assets)
 
-Esta carpeta es un sitio listo para subir a **Cloudflare Pages** (frontend estatico +
-Pages Functions que hacen de backend, sin necesidad de un servidor Node corriendo 24/7).
+Esta carpeta es un sitio listo para subir a **Cloudflare Workers** usando el flujo
+"Upload and deploy" del dashboard (Workers + Static Assets: `_worker.js` hace de
+backend y sirve `index.html`/`style.css`/`app.js` como archivos estaticos, sin
+necesitar servidor Node corriendo 24/7).
+
+> Nota: si usas el flujo **Create a Worker -> Upload and deploy**, esta carpeta
+> funciona tal cual (usa `_worker.js`, no `functions/`, porque ese dashboard no
+> soporta Pages Functions). Si en cambio creas un proyecto de **Pages** clasico
+> (Workers & Pages -> Pages -> Upload assets), tambien funciona igual: Pages
+> detecta `_worker.js` como Advanced Mode y lo usa como backend completo.
 
 ## Como ahorra creditos
 
@@ -17,13 +25,18 @@ Pages Functions que hacen de backend, sin necesidad de un servidor Node corriend
 
 ## Pasos para desplegar
 
-1. Entra a el dashboard de Cloudflare -> **Workers & Pages** -> **Create** -> **Pages**
-   -> **Upload assets** (subida directa, sin Git).
-2. Sube el contenido de esta carpeta (o el .zip ya generado) tal cual: `index.html`,
-   `style.css`, `app.js` y la carpeta `functions/` deben quedar en la raiz del
-   proyecto.
-3. Una vez creado el proyecto, ve a **Settings -> Environment variables** y agrega
-   estas 4 variables (marca "Encrypt" si el dashboard lo ofrece):
+1. En el dashboard de Cloudflare entra a **Workers & Pages** -> **Create**.
+   - Si te aparece la opcion **"Import an existing repository"** vs
+     **"Deploy manually" / "Upload assets"**, elige la de subida manual/directa.
+   - Si te lleva al flujo nuevo **"Create a Worker" -> "Upload and deploy"**,
+     tambien sirve: sube el mismo contenido ahi.
+2. Arrastra el contenido de esta carpeta (o descomprime el .zip y arrastra los
+   archivos): `index.html`, `style.css`, `app.js`, `_worker.js` deben quedar en
+   la **raiz** del proyecto (no dentro de una subcarpeta).
+3. Ponle un nombre al Worker/proyecto y dale a **Deploy**.
+4. Una vez creado, ve a **Settings -> Variables and Secrets** (o
+   "Environment variables" en Pages clasico) y agrega estas 4 variables (marca
+   "Encrypt"/"Secret" si el dashboard lo ofrece):
 
    | Variable | Valor |
    |---|---|
@@ -41,7 +54,7 @@ Pages Functions que hacen de backend, sin necesidad de un servidor Node corriend
    expuesta en ese historial. Te recomendamos regenerarla en openrouter.ai y usar
    la nueva key aqui.
 
-4. Vuelve a desplegar (Cloudflare re-despliega solo al guardar las variables, o
+5. Vuelve a desplegar (Cloudflare re-despliega solo al guardar las variables, o
    puedes forzar un redeploy desde el dashboard, pestaña "Deployments").
 
 Si no configuras las variables de Supabase, la app sigue funcionando (solo se
